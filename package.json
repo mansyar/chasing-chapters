@@ -14,13 +14,19 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
-    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
-    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
+    "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+    "docker:reset": "docker-compose -f docker-compose.dev.yml down -v && docker-compose -f docker-compose.dev.yml up -d"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.49.0",
     "@payloadcms/next": "3.49.0",
     "@payloadcms/payload-cloud": "3.49.0",
     "@payloadcms/richtext-lexical": "3.49.0",
+    "@payloadcms/storage-s3": "^3.49.0",
     "@payloadcms/ui": "3.49.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
@@ -28,8 +34,7 @@
     "next": "15.3.2",
     "payload": "3.49.0",
     "react": "19.1.0",
-    "sharp": "0.34.2",
-    "@payloadcms/db-postgres": "3.49.0"
+    "sharp": "0.34.2"
   },
   "devDependencies": {
     "@playwright/test": "1.50.0",
