@@ -43,6 +43,13 @@ When asked to design UI & frontend interface, include `.superdesign/CLAUDE.md`.
 - `pnpm devsafe` - Clean rebuild (removes .next and starts fresh)
 - All commands use `NODE_OPTIONS=--no-deprecation` to suppress warnings
 
+### Docker Development Commands
+
+- `pnpm docker:up` - Start PostgreSQL database container
+- `pnpm docker:down` - Stop database container  
+- `pnpm docker:logs` - View database logs
+- `pnpm docker:reset` - Reset database with fresh data
+
 ### Additional Development Commands
 
 - `pnpm test:int:watch` - Run integration tests in watch mode (use `vitest --config ./vitest.config.mts`)
@@ -114,9 +121,10 @@ According to `docs/PRD.md`, the app will include:
 
 The project includes Docker configuration:
 
-- `docker-compose.yml` provides PostgreSQL database
+- `docker-compose.dev.yml` provides PostgreSQL database on port 7482
 - Optional development setup for those preferring containerized DB
 - Main app can run locally while DB runs in Docker
+- Database: `chasing-chapters` with postgres/postgres credentials
 
 ## Important Notes
 
@@ -142,5 +150,11 @@ The project includes Docker configuration:
 
 ### API Integration Notes
 - Google Books API integration planned for book metadata
-- GraphQL endpoint available at `/api/graphql`
-- REST endpoints follow Payload's auto-generated patterns
+- GraphQL endpoint available at `/api/graphql` with playground at `/api/graphql-playground`
+- REST endpoints follow Payload's auto-generated patterns at `/api/[...slug]`
+- Admin panel accessible at `/admin`
+
+### Environment Setup
+- Required environment variables: `PAYLOAD_SECRET`, `DATABASE_URI`
+- PostgreSQL connection string format: `postgresql://user:password@host:port/database`
+- For local Docker: `postgresql://postgres:postgres@localhost:7482/chasing-chapters`
