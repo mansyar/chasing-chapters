@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { ColorPicker } from '../components/ColorPicker'
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
@@ -74,7 +75,7 @@ export const Tags: CollectionConfig = {
       admin: {
         description: 'Hex color for UI theming',
         components: {
-          Field: '@/components/ColorPicker', // TODO: Create color picker component
+          Field: ColorPicker as any,
         },
       },
     },

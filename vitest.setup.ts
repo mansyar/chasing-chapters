@@ -35,3 +35,6 @@ vi.mock('*.sass', () => ({}))
 
 // Specifically mock react-image-crop CSS
 vi.mock('react-image-crop/dist/ReactCrop.css', () => ({}))
+
+// Import jest-dom matchers
+// import '@testing-library/jest-dom'

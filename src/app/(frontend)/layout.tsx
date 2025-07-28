@@ -1,10 +1,9 @@
 import React from 'react'
 import './styles.css'
+import { Layout } from '@/components/layout'
+import { generateHomeMetadata } from '@/lib/metadata'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
-}
+export const metadata = generateHomeMetadata()
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
@@ -12,7 +11,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <Layout>{children}</Layout>
       </body>
     </html>
   )

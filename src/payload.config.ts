@@ -2,6 +2,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { defaultFeatures } from './lib/lexical-features'
 import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -28,7 +29,11 @@ export default buildConfig({
   },
   // Optimized collection order: Reviews (primary) → Tags (organization) → Media (assets) → Users (admin)
   collections: [Reviews, Tags, Media, Users],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: () => [
+      ...defaultFeatures,
+    ],
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

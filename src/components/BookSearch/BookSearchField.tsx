@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useField } from '@payloadcms/ui'
 import { BookSearchComponent } from './BookSearchComponent'
 import { ProcessedBookData } from '@/lib/google-books'
+import { OptimizedImage } from '@/components/common'
 // import './BookSearchField.scss'
 
 interface BookSearchFieldProps {
@@ -115,14 +116,15 @@ export const BookSearchField: React.FC<BookSearchFieldProps> = ({
                 </div>
                 <div className="selected-book-details">
                   <div className="book-cover-small">
-                    {selectedBook.coverImageUrl ? (
-                      <img
-                        src={selectedBook.coverImageUrl}
-                        alt={`Cover of ${selectedBook.title}`}
-                      />
-                    ) : (
-                      <div className="cover-placeholder">📚</div>
-                    )}
+                    <OptimizedImage
+                      src={selectedBook.coverImageUrl}
+                      alt={`Cover of ${selectedBook.title}`}
+                      width={40}
+                      height={60}
+                      quality={75}
+                      loading="lazy"
+                      fallbackIcon={<div className="cover-placeholder">📚</div>}
+                    />
                   </div>
                   <div className="book-meta">
                     <div className="book-title-small">{selectedBook.title}</div>

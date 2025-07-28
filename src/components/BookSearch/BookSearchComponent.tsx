@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react'
 import { ProcessedBookData } from '@/lib/google-books'
+import { OptimizedImage } from '@/components/common'
 // import './BookSearch.scss'
 
 interface BookSearchProps {
@@ -253,17 +254,15 @@ export const BookSearchComponent: React.FC<BookSearchProps> = ({
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="book-cover">
-                  {book.coverImageUrl ? (
-                    <img
-                      src={book.coverImageUrl}
-                      alt={`Cover of ${book.title}`}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none'
-                      }}
-                    />
-                  ) : (
-                    <div className="book-cover-placeholder">📚</div>
-                  )}
+                  <OptimizedImage
+                    src={book.coverImageUrl}
+                    alt={`Cover of ${book.title}`}
+                    width={60}
+                    height={90}
+                    quality={75}
+                    loading="lazy"
+                    fallbackIcon={<div className="book-cover-placeholder">📚</div>}
+                  />
                 </div>
                 <div className="book-info">
                   <div className="book-title">{book.title}</div>

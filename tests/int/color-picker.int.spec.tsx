@@ -1,0 +1,163 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import React from 'react'
+import { ColorPicker } from '../../src/components/ColorPicker/ColorPicker'
+
+// Mock react-toastify
+vi.mock('react-toastify', () => ({
+  toast: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
+}))
+
+describe('ColorPicker Component', () => {
+  const mockOnChange = vi.fn()
+  const defaultProps = {
+    path: 'color',
+    name: 'color',
+    label: 'Color',
+    value: '#3B82F6',
+    onChange: mockOnChange,
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('should render with default color', () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    expect(screen.getByText('Color')).toBeInTheDocument()
+    expect(screen.getByText('#3B82F6')).toBeInTheDocument()
+  })
+
+  it('should display required indicator when required is true', () => {
+    render(<ColorPicker {...defaultProps} required />)
+    
+    expect(screen.getByText('*')).toBeInTheDocument()
+  })
+
+  it('should render color preview with correct background color', () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const preview = screen.getByText('#3B82F6')
+    expect(preview).toHaveStyle({ backgroundColor: '#3B82F6' })
+  })
+
+  it('should render default color swatches', () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    // Should have 10 default color swatches
+    const swatches = screen.getAllByRole('button').filter(btn => 
+      btn.getAttribute('title')?.startsWith('#')
+    )
+    expect(swatches).toHaveLength(10)
+  })
+
+  it('should handle color swatch selection', async () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const redSwatch = screen.getByRole('button', { name: '#EF4444' })
+    fireEvent.click(redSwatch)
+    
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith('#EF4444')
+    })
+  })
+
+  it('should show custom color input when custom button is clicked', async () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const customButton = screen.getByText('Custom')
+    fireEvent.click(customButton)
+    
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('#3B82F6')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('#3B82F6')).toBeInTheDocument()
+    })
+  })
+
+  it('should handle custom hex color input', async () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const customButton = screen.getByText('Custom')
+    fireEvent.click(customButton)
+    
+    await waitFor(() => {
+      const hexInput = screen.getByPlaceholderText('#3B82F6')
+      fireEvent.change(hexInput, { target: { value: '#FF5733' } })
+      
+      expect(mockOnChange).toHaveBeenCalledWith('#FF5733')
+    })
+  })
+
+  it('should handle native color picker input', async () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const customButton = screen.getByText('Custom')
+    fireEvent.click(customButton)
+    
+    await waitFor(() => {
+      const colorInput = screen.getByDisplayValue('#3B82F6')
+      fireEvent.change(colorInput, { target: { value: '#00FF00' } })
+      
+      expect(mockOnChange).toHaveBeenCalledWith('#00FF00')
+    })
+  })
+
+  it('should validate hex color format', async () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const customButton = screen.getByText('Custom')
+    fireEvent.click(customButton)
+    
+    await waitFor(() => {
+      const hexInput = screen.getByPlaceholderText('#3B82F6')
+      
+      // Invalid hex color
+      fireEvent.change(hexInput, { target: { value: 'invalid' } })
+      expect(hexInput).toHaveClass('color-picker__input--invalid')
+      
+      // Valid hex color
+      fireEvent.change(hexInput, { target: { value: '#FF5733' } })
+      expect(hexInput).not.toHaveClass('color-picker__input--invalid')
+    })
+  })
+
+  it('should not render interactive elements when readOnly is true', () => {
+    render(<ColorPicker {...defaultProps} readOnly />)
+    
+    expect(screen.queryByText('Custom')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('should update preview when color changes', async () => {
+    const { rerender } = render(<ColorPicker {...defaultProps} />)
+    
+    expect(screen.getByText('#3B82F6')).toBeInTheDocument()
+    
+    rerender(<ColorPicker {...defaultProps} value="#FF5733" />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('#FF5733')).toBeInTheDocument()
+    })
+  })
+
+  it('should render hidden input with correct value', () => {
+    render(<ColorPicker {...defaultProps} />)
+    
+    const hiddenInput = document.querySelector('input[type="hidden"]')
+    expect(hiddenInput).toHaveAttribute('name', 'color')
+    expect(hiddenInput).toHaveAttribute('value', '#3B82F6')
+  })
+
+  it('should highlight selected color swatch', async () => {
+    render(<ColorPicker {...defaultProps} value="#EF4444" />)
+    
+    await waitFor(() => {
+      const redSwatch = screen.getByRole('button', { name: '#EF4444' })
+      expect(redSwatch).toHaveClass('color-picker__swatch--selected')
+    })
+  })
+})

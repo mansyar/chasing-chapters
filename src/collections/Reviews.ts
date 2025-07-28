@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { BookSearchField } from '../components/BookSearch'
 import { BookMetadataFields } from '../components/BookMetadata'
+import { BulkActions } from '../components/BulkActions'
+import { TagManager } from '../components/TagManager'
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
@@ -13,6 +15,13 @@ export const Reviews: CollectionConfig = {
     description: 'Manage book reviews and content',
     group: 'Content',
     listSearchableFields: ['title', 'author', 'excerpt'],
+    pagination: {
+      defaultLimit: 25,
+      limits: [10, 25, 50, 100],
+    },
+    components: {
+      afterList: [BulkActions as any],
+    },
   },
   access: {
     // Admins and authors can create reviews
@@ -283,6 +292,9 @@ export const Reviews: CollectionConfig = {
           hasMany: true,
           admin: {
             description: 'Review tags for categorization',
+            components: {
+              Field: TagManager as any,
+            },
           },
         },
         {
