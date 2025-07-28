@@ -22,9 +22,22 @@ describe('Functional Integration Tests', () => {
 
     it('should have reviews collection with all base fields', () => {
       const reviewsCollection = payload.collections.reviews
-      const fields = reviewsCollection.config.fields
-        .filter(f => f.name) // Only named fields
-        .map(f => f.name)
+      
+      // Helper function to extract field names from nested structures
+      const extractFieldNames = (fields: any[]): string[] => {
+        const names: string[] = []
+        for (const field of fields) {
+          if (field.name) {
+            names.push(field.name)
+          }
+          if (field.fields) {
+            names.push(...extractFieldNames(field.fields))
+          }
+        }
+        return names
+      }
+      
+      const fields = extractFieldNames(reviewsCollection.config.fields)
       
       expect(fields).toContain('title')
       expect(fields).toContain('slug')

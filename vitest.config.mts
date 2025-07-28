@@ -15,5 +15,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/int/**/*.int.spec.ts'],
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        execArgv: ['--import', './register-css-loader.mjs'],
+      },
+    },
+  },
+  define: {
+    'import.meta.vitest': undefined,
   },
 })

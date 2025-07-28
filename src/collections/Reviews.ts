@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { BookSearchField } from '../components/BookSearch'
+import { BookMetadataFields } from '../components/BookMetadata'
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
@@ -40,13 +42,36 @@ export const Reviews: CollectionConfig = {
     },
   },
   fields: [
+    // Book Search Section
     {
-      name: 'title',
-      type: 'text',
-      required: true,
+      type: 'collapsible',
+      label: 'Book Selection',
       admin: {
-        description: 'Review title for SEO and admin display',
+        initCollapsed: false,
+        description: 'Search for a book or enter book details manually',
       },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+          admin: {
+            components: {
+              Field: BookSearchField as any,
+            },
+            description: 'Search for a book using Google Books API or enter manually',
+          },
+        },
+        {
+          name: 'bookMetadataHelper',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: BookMetadataFields as any,
+            },
+          },
+        },
+      ],
     },
     {
       name: 'slug',

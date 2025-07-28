@@ -1,0 +1,186 @@
+.book-metadata-populate {
+  margin: 1rem 0;
+
+  .populate-notification {
+    background: #e8f4fd;
+    border: 1px solid #b3d7f7;
+    border-radius: 8px;
+    padding: 16px;
+    animation: slideIn 0.3s ease;
+
+    .populate-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      .populate-icon {
+        font-size: 20px;
+        margin-top: 2px;
+      }
+
+      .populate-text {
+        flex: 1;
+
+        .populate-title {
+          font-weight: 600;
+          font-size: 14px;
+          color: #0c5aa6;
+          margin-bottom: 2px;
+        }
+
+        .populate-subtitle {
+          font-size: 13px;
+          color: #4a5568;
+          line-height: 1.3;
+        }
+      }
+    }
+
+    .populate-preview {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px;
+
+        .preview-item {
+          display: flex;
+          gap: 8px;
+          font-size: 12px;
+
+          .preview-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 50px;
+          }
+
+          .preview-value {
+            color: #2d3748;
+            flex: 1;
+            word-break: break-word;
+          }
+        }
+      }
+    }
+
+    .populate-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      .populate-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &.populate {
+          background: #28a745;
+          color: #fff;
+
+          &:hover {
+            background: #218838;
+          }
+        }
+
+        &.dismiss {
+          background: #6c757d;
+          color: #fff;
+
+          &:hover {
+            background: #5a6268;
+          }
+        }
+      }
+    }
+
+    .populate-note {
+      font-size: 11px;
+      color: #6c757d;
+      font-style: italic;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .book-metadata-populate {
+    .populate-notification {
+      .populate-preview {
+        .preview-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .populate-actions {
+        flex-direction: column;
+
+        .populate-btn {
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
+
+// Integration with Payload admin styles
+.payload-admin {
+  .book-metadata-populate {
+    .populate-notification {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border);
+
+      .populate-header .populate-text {
+        .populate-title {
+          color: var(--theme-success);
+        }
+
+        .populate-subtitle {
+          color: var(--theme-text-dim);
+        }
+      }
+
+      .populate-preview {
+        background: var(--theme-bg);
+        border-color: var(--theme-border);
+
+        .preview-item {
+          .preview-label {
+            color: var(--theme-text-dim);
+          }
+
+          .preview-value {
+            color: var(--theme-text);
+          }
+        }
+      }
+
+      .populate-note {
+        color: var(--theme-text-dim);
+      }
+    }
+  }
+}
