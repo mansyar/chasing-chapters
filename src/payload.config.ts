@@ -10,6 +10,8 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Reviews } from './collections/Reviews'
+import { Tags } from './collections/Tags'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,8 +22,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '- Chasing Chapters',
+    },
   },
-  collections: [Users, Media],
+  // Optimized collection order: Reviews (primary) → Tags (organization) → Media (assets) → Users (admin)
+  collections: [Reviews, Tags, Media, Users],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

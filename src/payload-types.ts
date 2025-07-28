@@ -67,16 +67,20 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    reviews: Review;
+    tags: Tag;
     media: Media;
+    users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -114,11 +118,213 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Manage book reviews and content
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  /**
+   * Review title for SEO and admin display
+   */
+  title: string;
+  /**
+   * URL-friendly version of the title
+   */
+  slug: string;
+  /**
+   * Book author name
+   */
+  author: string;
+  /**
+   * Short review summary (max 300 characters)
+   */
+  excerpt: string;
+  /**
+   * Full review content
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Rating from 1 to 5 stars
+   */
+  rating: number;
+  /**
+   * Publication date of the review
+   */
+  publishedDate: string;
+  /**
+   * Publication status
+   */
+  status: 'draft' | 'published';
+  /**
+   * Current reading status
+   */
+  readingStatus: 'want-to-read' | 'currently-reading' | 'finished';
+  /**
+   * Date when you started reading
+   */
+  dateStarted?: string | null;
+  /**
+   * Date when you finished reading
+   */
+  dateFinished?: string | null;
+  /**
+   * Number of pages in the book
+   */
+  pageCount?: number | null;
+  /**
+   * Book genre or category
+   */
+  genre?: string | null;
+  /**
+   * Year the book was published
+   */
+  publishYear?: number | null;
+  /**
+   * ISBN number (for future API integration)
+   */
+  isbn?: string | null;
+  /**
+   * Google Books API ID (for future integration)
+   */
+  googleBooksId?: string | null;
+  /**
+   * Book cover image
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Review tags for categorization
+   */
+  tags?: (number | Tag)[] | null;
+  /**
+   * Review author
+   */
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Upload and manage media files
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Alternative text for accessibility (minimum 10 characters)
+   */
+  alt: string;
+  /**
+   * Optional image caption
+   */
+  caption?: string | null;
+  /**
+   * Context where this image is used
+   */
+  usageContext?: ('book-cover' | 'avatar' | 'content' | 'general') | null;
+  /**
+   * User who uploaded this file
+   */
+  uploadedBy?: (number | null) | User;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    cover?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Manage user accounts and permissions
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  /**
+   * First name
+   */
+  firstName?: string | null;
+  /**
+   * Last name
+   */
+  lastName?: string | null;
+  /**
+   * Display name (auto-generated from first/last name or email)
+   */
+  displayName?: string | null;
+  /**
+   * User role and permissions level
+   */
+  role: 'admin' | 'author';
+  /**
+   * Profile avatar image
+   */
+  avatar?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -138,24 +344,31 @@ export interface User {
   password?: string | null;
 }
 /**
+ * Organize content with tags and categories
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "tags".
  */
-export interface Media {
+export interface Tag {
   id: number;
-  alt: string;
-  prefix?: string | null;
+  /**
+   * Tag name (must be unique)
+   */
+  name: string;
+  /**
+   * URL-friendly version of the tag name
+   */
+  slug: string;
+  /**
+   * Optional description of the tag (max 200 characters)
+   */
+  description?: string | null;
+  /**
+   * Hex color for UI theming
+   */
+  color?: string | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -165,12 +378,20 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'reviews';
+        value: number | Review;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -216,9 +437,129 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  author?: T;
+  excerpt?: T;
+  content?: T;
+  rating?: T;
+  publishedDate?: T;
+  status?: T;
+  readingStatus?: T;
+  dateStarted?: T;
+  dateFinished?: T;
+  pageCount?: T;
+  genre?: T;
+  publishYear?: T;
+  isbn?: T;
+  googleBooksId?: T;
+  coverImage?: T;
+  tags?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  color?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  caption?: T;
+  usageContext?: T;
+  uploadedBy?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        cover?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  displayName?: T;
+  role?: T;
+  avatar?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -235,25 +576,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  prefix?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
