@@ -9,19 +9,20 @@ import { ReviewGrid } from '@/components/reviews'
 import { Review, Media, Tag } from '@/payload-types'
 
 interface TagPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: TagPageProps) {
+  const { slug } = await params
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
   const tags = await payload.find({
     collection: 'tags',
     where: {
-      slug: { equals: params.slug }
+      slug: { equals: slug }
     },
     limit: 1
   })
@@ -42,6 +43,7 @@ export async function generateMetadata({ params }: TagPageProps) {
 }
 
 export default async function TagPage({ params }: TagPageProps) {
+  const { slug } = await params
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -49,7 +51,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const tags = await payload.find({
     collection: 'tags',
     where: {
-      slug: { equals: params.slug }
+      slug: { equals: slug }
     },
     limit: 1
   })

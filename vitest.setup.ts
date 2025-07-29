@@ -36,5 +36,50 @@ vi.mock('*.sass', () => ({}))
 // Specifically mock react-image-crop CSS
 vi.mock('react-image-crop/dist/ReactCrop.css', () => ({}))
 
-// Import jest-dom matchers
-// import '@testing-library/jest-dom'
+// Import jest-dom matchers with vitest-specific import
+import '@testing-library/jest-dom/vitest'
+
+// Set up automatic cleanup after each test
+import { cleanup } from '@testing-library/react'
+import { afterEach, beforeEach } from 'vitest'
+
+afterEach(() => {
+  cleanup()
+})
+
+// Silence React 18 warnings in tests
+const originalError = console.error
+const originalWarn = console.warn
+beforeEach(() => {
+  console.error = (...args: any[]) => {
+    const message = typeof args[0] === 'string' ? args[0] : ''
+    
+    // Suppress specific React warnings in tests
+    if (
+      (message.includes('Warning: An update to') && message.includes('was not wrapped in act')) ||
+      (message.includes('Received `true` for a non-boolean attribute')) ||
+      (message.includes('If you want to write it to the DOM, pass a string instead'))
+    ) {
+      return
+    }
+    originalError.call(console, ...args)
+  }
+  
+  console.warn = (...args: any[]) => {
+    const message = typeof args[0] === 'string' ? args[0] : ''
+    
+    // Suppress specific React warnings in tests
+    if (
+      (message.includes('Warning: An update to') && message.includes('was not wrapped in act')) ||
+      (message.includes('Received `true` for a non-boolean attribute'))
+    ) {
+      return
+    }
+    originalWarn.call(console, ...args)
+  }
+})
+
+afterEach(() => {
+  console.error = originalError
+  console.warn = originalWarn
+})

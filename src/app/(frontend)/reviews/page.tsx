@@ -1,4 +1,5 @@
 import { getPayload } from 'payload'
+import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
 
 import config from '@/payload.config'
@@ -94,15 +95,15 @@ export default async function ReviewsPage() {
               Browse by reading status or explore different topics and genres.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/currently-reading" className="btn-primary">
+              <Link href="/currently-reading" className="btn-primary">
                 Currently Reading
-              </a>
-              <a href="/want-to-read" className="btn-outline">
+              </Link>
+              <Link href="/want-to-read" className="btn-outline">
                 Want to Read
-              </a>
-              <a href="/tags" className="btn-outline">
+              </Link>
+              <Link href="/tags" className="btn-outline">
                 Browse Tags
-              </a>
+              </Link>
             </div>
           </PageWrapper>
         </section>

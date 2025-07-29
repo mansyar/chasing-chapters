@@ -21,6 +21,9 @@ export default defineConfig({
         execArgv: ['--import', './register-css-loader.mjs'],
       },
     },
+    globals: true,
+    silent: false,
+    logLevel: 'error',
   },
   define: {
     'import.meta.vitest': undefined,

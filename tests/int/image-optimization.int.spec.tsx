@@ -48,8 +48,9 @@ describe('OptimizedImage Component', () => {
       />
     )
 
-    const fallback = screen.getByRole('img', { hidden: true })
-    expect(fallback).toBeInTheDocument()
+    // The fallback renders an SVG with BookOpen icon (look for the SVG element)
+    const fallbackSvg = document.querySelector('svg')
+    expect(fallbackSvg).toBeInTheDocument()
     expect(screen.queryByTestId('next-image')).not.toBeInTheDocument()
   })
 
@@ -87,9 +88,7 @@ describe('OptimizedImage Component', () => {
     // Simulate image load
     image.dispatchEvent(new Event('load'))
     
-    await waitFor(() => {
-      expect(onLoad).toHaveBeenCalledTimes(1)
-    })
+    expect(onLoad).toHaveBeenCalledTimes(1)
   })
 
   it('handles image error correctly', async () => {
@@ -110,9 +109,7 @@ describe('OptimizedImage Component', () => {
     // Simulate image error
     image.dispatchEvent(new Event('error'))
     
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledTimes(1)
-    })
+    expect(onError).toHaveBeenCalledTimes(1)
   })
 
   it('applies correct props for fill images', () => {

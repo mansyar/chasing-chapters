@@ -38,6 +38,10 @@ vi.mock('../../src/lib/google-books', () => ({
 describe('Google Books API Endpoints', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    
+    // Mock console.error to suppress error logs in tests
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    
     // Reset mock implementations and provide default responses to prevent undefined errors
     mockClient.searchAndProcessBooks.mockReset().mockResolvedValue({
       books: [],

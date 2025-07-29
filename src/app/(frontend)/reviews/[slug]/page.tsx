@@ -12,19 +12,20 @@ import { formatDate, formatDateShort } from '@/lib/utils'
 import { generateReviewMetadata } from '@/lib/metadata'
 
 interface ReviewPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: ReviewPageProps) {
+  const { slug } = await params
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
   const reviews = await payload.find({
     collection: 'reviews',
     where: {
-      slug: { equals: params.slug },
+      slug: { equals: slug },
       status: { equals: 'published' }
     },
     limit: 1,
@@ -60,13 +61,14 @@ export async function generateMetadata({ params }: ReviewPageProps) {
 }
 
 export default async function ReviewPage({ params }: ReviewPageProps) {
+  const { slug } = await params
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
   const reviews = await payload.find({
     collection: 'reviews',
     where: {
-      slug: { equals: params.slug },
+      slug: { equals: slug },
       status: { equals: 'published' }
     },
     limit: 1,

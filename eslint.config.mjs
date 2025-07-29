@@ -15,7 +15,7 @@ const eslintConfig = [
     rules: {
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off', // Turn off for complex CMS and lexical content
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -28,6 +28,7 @@ const eslintConfig = [
           caughtErrorsIgnorePattern: '^(_|ignore)',
         },
       ],
+      'jsx-a11y/alt-text': 'off', // Disabled due to false positives with spread props
     },
   },
   {

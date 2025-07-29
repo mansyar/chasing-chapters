@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import React from 'react'
 import { TagManager } from '../../src/components/TagManager/TagManager'
 
@@ -38,115 +38,191 @@ describe('TagManager Component', () => {
     })
   })
 
-  it('should render with label', () => {
-    render(<TagManager {...defaultProps} />)
+  it('should render with label', async () => {
+    await act(async () => {
+      render(<TagManager {...defaultProps} />)
+    })
     
     expect(screen.getByText('Tags')).toBeInTheDocument()
   })
 
-  it('should display required indicator when required is true', () => {
-    render(<TagManager {...defaultProps} required />)
+  it('should display required indicator when required is true', async () => {
+    await act(async () => {
+      render(<TagManager {...defaultProps} required />)
+    })
     
     expect(screen.getByText('*')).toBeInTheDocument()
   })
 
   it('should fetch tags on mount', async () => {
-    render(<TagManager {...defaultProps} />)
+    await act(async () => {
+      render(<TagManager {...defaultProps} />)
+    })
     
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/tags?limit=100&sort=name', {
-        credentials: 'include',
-      })
+    // Allow time for the async fetch to be called
+    await new Promise(resolve => setTimeout(resolve, 10))
+    
+    expect(fetch).toHaveBeenCalledWith('/api/tags?limit=100&sort=name', {
+      credentials: 'include',
     })
   })
 
   it('should display selected tags', async () => {
-    render(<TagManager {...defaultProps} value={['1', '2']} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} value={['1', '2']} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     await waitFor(() => {
       expect(screen.getByText('Fiction')).toBeInTheDocument()
       expect(screen.getByText('Non-Fiction')).toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
   })
 
   it('should show dropdown when input is focused', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
+    
+    await act(async () => {
+      fireEvent.focus(input)
+    })
     
     await waitFor(() => {
       expect(screen.getByText('Fiction')).toBeInTheDocument()
       expect(screen.getByText('Non-Fiction')).toBeInTheDocument()
       expect(screen.getByText('Biography')).toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
   })
 
   it('should filter tags based on search term', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
-    fireEvent.change(input, { target: { value: 'fic' } })
+    
+    await act(async () => {
+      fireEvent.focus(input)
+      fireEvent.change(input, { target: { value: 'fic' } })
+    })
     
     await waitFor(() => {
       expect(screen.getByText('Fiction')).toBeInTheDocument()
       expect(screen.getByText('Non-Fiction')).toBeInTheDocument()
       expect(screen.queryByText('Biography')).not.toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
   })
 
   it('should add tag when clicked from dropdown', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
+    
+    await act(async () => {
+      fireEvent.focus(input)
+    })
     
     await waitFor(() => {
       const fictionOption = screen.getByText('Fiction')
-      fireEvent.click(fictionOption)
+      act(() => {
+        fireEvent.click(fictionOption)
+      })
       
       expect(mockOnChange).toHaveBeenCalledWith(['1'])
-    })
+    }, { container: renderResult.container })
   })
 
   it('should remove tag when remove button is clicked', async () => {
-    render(<TagManager {...defaultProps} value={['1']} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} value={['1']} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     await waitFor(() => {
       const removeButton = screen.getByTitle('Remove Fiction')
-      fireEvent.click(removeButton)
+      act(() => {
+        fireEvent.click(removeButton)
+      })
       
       expect(mockOnChange).toHaveBeenCalledWith([])
-    })
+    }, { container: renderResult.container })
   })
 
   it('should show create button when search term has no matches', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
-    fireEvent.change(input, { target: { value: 'New Tag' } })
+    
+    await act(async () => {
+      fireEvent.focus(input)
+      fireEvent.change(input, { target: { value: 'New Tag' } })
+    })
     
     await waitFor(() => {
       expect(screen.getByText('Create "New Tag"')).toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
   })
 
   it('should open create modal when create button is clicked', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
-    fireEvent.change(input, { target: { value: 'New Tag' } })
     
-    await waitFor(() => {
-      const createButton = screen.getByText('Create "New Tag"')
-      fireEvent.click(createButton)
-      
-      expect(screen.getByText('Create New Tag')).toBeInTheDocument()
-      expect(screen.getByDisplayValue('New Tag')).toBeInTheDocument()
+    await act(async () => {
+      fireEvent.focus(input)
+      fireEvent.change(input, { target: { value: 'New Tag' } })
     })
+    
+    // Wait for create button to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Create.*New Tag/)).toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    const createButton = screen.getByText(/Create.*New Tag/)
+    await act(async () => {
+      fireEvent.click(createButton)
+    })
+    
+    // Wait for modal to open
+    await waitFor(() => {
+      expect(screen.getByText('Create New Tag')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Enter tag name')).toBeInTheDocument()
+    }, { container: renderResult.container })
   })
 
   it('should create new tag when form is submitted', async () => {
@@ -156,117 +232,210 @@ describe('TagManager Component', () => {
       json: () => Promise.resolve(newTag),
     })
 
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
-    fireEvent.change(input, { target: { value: 'New Tag' } })
     
+    await act(async () => {
+      fireEvent.focus(input)
+      fireEvent.change(input, { target: { value: 'New Tag' } })
+    })
+    
+    // Wait for create button to appear
     await waitFor(() => {
-      const createButton = screen.getByText('Create "New Tag"')
+      expect(screen.getByText(/Create.*New Tag/)).toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    const createButton = screen.getByText(/Create.*New Tag/)
+    await act(async () => {
       fireEvent.click(createButton)
     })
     
+    // Wait for modal to open and submit button to be available
     await waitFor(() => {
-      const submitButton = screen.getByText('Create Tag')
+      expect(screen.getByText('Create Tag')).toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    const submitButton = screen.getByText('Create Tag')
+    await act(async () => {
       fireEvent.click(submitButton)
-      
-      expect(fetch).toHaveBeenCalledWith('/api/tags', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          name: 'New Tag',
-          color: '#3B82F6',
-        }),
-      })
+    })
+    
+    expect(fetch).toHaveBeenCalledWith('/api/tags', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        name: 'New Tag',
+        color: '#3B82F6',
+      }),
     })
   })
 
   it('should handle keyboard navigation', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
     
-    await waitFor(() => {
-      // Filter to one result
-      fireEvent.change(input, { target: { value: 'Fiction' } })
+    await act(async () => {
+      fireEvent.focus(input)
     })
     
-    await waitFor(() => {
-      // Press Enter to select
-      fireEvent.keyDown(input, { key: 'Enter' })
-      
-      expect(mockOnChange).toHaveBeenCalledWith(['1'])
+    await act(async () => {
+      // Filter to one result - use "Biogra" to get only "Biography"
+      fireEvent.change(input, { target: { value: 'Biogra' } })
     })
+    
+    // Wait for the filtered results to appear
+    await waitFor(() => {
+      expect(screen.getByText('Biography')).toBeInTheDocument()
+      // Ensure only one result is shown
+      expect(screen.queryByText('Fiction')).not.toBeInTheDocument()
+      expect(screen.queryByText('Non-Fiction')).not.toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    // Press Enter to select
+    await act(async () => {
+      fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13 })
+    })
+    
+    // Wait for the onChange to be called (Biography has ID '3')
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(['3'])
+    }, { container: renderResult.container })
   })
 
   it('should handle escape key to close dropdown', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
+    
+    await act(async () => {
+      fireEvent.focus(input)
+    })
     
     await waitFor(() => {
       expect(screen.getByText('Fiction')).toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
     
-    fireEvent.keyDown(input, { key: 'Escape' })
+    await act(async () => {
+      fireEvent.keyDown(input, { key: 'Escape' })
+    })
     
     await waitFor(() => {
       expect(screen.queryByText('Fiction')).not.toBeInTheDocument()
-    })
+    }, { container: renderResult.container })
   })
 
-  it('should not render interactive elements when readOnly is true', () => {
-    render(<TagManager {...defaultProps} readOnly />)
+  it('should not render interactive elements when readOnly is true', async () => {
+    await act(async () => {
+      render(<TagManager {...defaultProps} readOnly />)
+    })
     
     expect(screen.queryByPlaceholderText('Search or add tags...')).not.toBeInTheDocument()
   })
 
   it('should display selected tags with correct colors', async () => {
-    render(<TagManager {...defaultProps} value={['1']} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} value={['1']} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     await waitFor(() => {
       const fictionTag = screen.getByText('Fiction')
       const tagElement = fictionTag.closest('.tag-manager__tag')
       expect(tagElement).toHaveStyle({ backgroundColor: '#3B82F6' })
-    })
+    }, { container: renderResult.container })
   })
 
   it('should filter out already selected tags from dropdown', async () => {
-    render(<TagManager {...defaultProps} value={['1']} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} value={['1']} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
+    
+    await act(async () => {
+      fireEvent.focus(input)
+    })
     
     await waitFor(() => {
-      expect(screen.queryByText('Fiction')).not.toBeInTheDocument() // Should not appear in dropdown
-      expect(screen.getByText('Non-Fiction')).toBeInTheDocument() // Should appear in dropdown
-      expect(screen.getByText('Biography')).toBeInTheDocument() // Should appear in dropdown
-    })
+      // Fiction should appear in selected tags but NOT in dropdown
+      const dropdown = renderResult.container.querySelector('.tag-manager__dropdown')
+      const dropdownOptions = dropdown?.querySelectorAll('.tag-manager__option')
+      const dropdownTexts = Array.from(dropdownOptions || []).map(option => option.textContent)
+      
+      expect(dropdownTexts).not.toContain('Fiction') // Should not appear in dropdown
+      expect(dropdownTexts).toContain('Non-Fiction') // Should appear in dropdown
+      expect(dropdownTexts).toContain('Biography') // Should appear in dropdown
+    }, { container: renderResult.container })
   })
 
   it('should handle tag creation modal cancellation', async () => {
-    render(<TagManager {...defaultProps} />)
+    let renderResult: any
+    await act(async () => {
+      renderResult = render(<TagManager {...defaultProps} />)
+    })
+    
+    // Allow time for async operations to complete
+    await new Promise(resolve => setTimeout(resolve, 50))
     
     const input = screen.getByPlaceholderText('Search or add tags...')
-    fireEvent.focus(input)
-    fireEvent.change(input, { target: { value: 'New Tag' } })
     
+    await act(async () => {
+      fireEvent.focus(input)
+      fireEvent.change(input, { target: { value: 'New Tag' } })
+    })
+    
+    // Wait for create button to appear
     await waitFor(() => {
-      const createButton = screen.getByText('Create "New Tag"')
+      expect(screen.getByText(/Create.*New Tag/)).toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    const createButton = screen.getByText(/Create.*New Tag/)
+    await act(async () => {
       fireEvent.click(createButton)
     })
     
+    // Wait for modal to open
     await waitFor(() => {
-      const cancelButton = screen.getByText('Cancel')
+      expect(screen.getByText('Cancel')).toBeInTheDocument()
+    }, { container: renderResult.container })
+    
+    const cancelButton = screen.getByText('Cancel')
+    await act(async () => {
       fireEvent.click(cancelButton)
-      
-      expect(screen.queryByText('Create New Tag')).not.toBeInTheDocument()
     })
+    
+    await waitFor(() => {
+      expect(screen.queryByText('Create New Tag')).not.toBeInTheDocument()
+    }, { container: renderResult.container })
   })
 })

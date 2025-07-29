@@ -17,6 +17,9 @@ describe('Google Books API Integration', () => {
     
     // Clear fetch mocks
     vi.clearAllMocks()
+    
+    // Mock console.error to suppress error logs in tests
+    vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   describe('GoogleBooksClient', () => {
