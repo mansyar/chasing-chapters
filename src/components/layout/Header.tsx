@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, BookOpen, Search } from 'lucide-react'
+import { Menu, X, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { GlobalSearch } from '@/components/search'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -44,10 +45,7 @@ export default function Header() {
 
           {/* Search and Mobile Menu Button */}
           <div className="flex items-center space-x-4">
-            <button className="text-neutral-500 hover:text-neutral-700 transition-colors">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </button>
+            <GlobalSearch />
             
             {/* Mobile menu button */}
             <button

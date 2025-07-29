@@ -9,10 +9,10 @@
 
 :root {
   /* Primary Color Palette */
-  --primary-blue: #3B82F6;
-  --primary-blue-light: #60A5FA;
-  --primary-blue-dark: #1D4ED8;
-  --primary-blue-hover: #2563EB;
+  --primary-magenta: #E11D74;
+  --primary-magenta-light: #F472B6;
+  --primary-magenta-dark: #9D174D;
+  --primary-magenta-hover: #BE185D;
 
   /* Secondary Colors */
   --gray-50: #F9FAFB;
@@ -35,7 +35,7 @@
   --error-red-light: #F87171;
 
   /* Tag Color Defaults (will be overridden dynamically) */
-  --tag-color-primary: #3B82F6;
+  --tag-color-primary: #E11D74;
   --tag-color-secondary: #10B981;
   --tag-color-accent: #F59E0B;
 
@@ -106,7 +106,7 @@
       margin: 0;
       
       &::after {
-        content: '=Ú';
+        content: '=ï¿½';
         display: block;
         font-size: var(--font-size-sm);
         margin-top: var(--space-2);
@@ -139,13 +139,13 @@
       font-size: var(--font-size-sm);
       
       &:hover {
-        background: rgba(59, 130, 246, 0.1);
-        color: var(--primary-blue-light);
+        background: rgba(225, 29, 116, 0.1);
+        color: var(--primary-magenta-light);
         transform: translateX(2px);
       }
       
       &.nav__link--active {
-        background: var(--primary-blue);
+        background: var(--primary-magenta);
         color: white;
         font-weight: 500;
         box-shadow: var(--shadow-md);
@@ -249,7 +249,7 @@
         border-radius: var(--radius-sm);
         margin-right: var(--space-2);
         border: 2px solid var(--gray-300);
-        background: var(--primary-blue);
+        background: var(--primary-magenta);
       }
     }
     
@@ -275,7 +275,7 @@
         height: 24px;
         border-radius: var(--radius-sm);
         border: 2px solid var(--gray-300);
-        background: var(--value, var(--primary-blue));
+        background: var(--value, var(--primary-magenta));
         z-index: 1;
       }
     }
@@ -352,7 +352,7 @@
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: var(--primary-blue);
+        background: var(--primary-magenta);
         color: white;
         display: flex;
         align-items: center;
@@ -379,7 +379,7 @@
         border-bottom-color: #F59E0B;
         
         &::before {
-          content: '=Ö';
+          content: '=ï¿½';
           margin-right: var(--space-2);
         }
       }
@@ -388,10 +388,10 @@
     &.book-metadata {
       .collapsible__header {
         background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
-        border-bottom-color: var(--primary-blue);
+        border-bottom-color: var(--primary-magenta);
         
         &::before {
-          content: '=Ú';
+          content: '=ï¿½';
           margin-right: var(--space-2);
         }
       }
@@ -403,7 +403,7 @@
         border-bottom-color: var(--success-green);
         
         &::before {
-          content: '<÷';
+          content: '<ï¿½';
           margin-right: var(--space-2);
         }
       }
@@ -494,7 +494,7 @@
           }
           
           &.active {
-            background: var(--primary-blue);
+            background: var(--primary-magenta);
             color: white;
           }
         }
@@ -517,7 +517,7 @@
         }
         
         blockquote {
-          border-left: 4px solid var(--primary-blue);
+          border-left: 4px solid var(--primary-magenta);
           margin: var(--space-6) 0;
           padding: var(--space-4) var(--space-6);
           background: var(--gray-50);
@@ -545,7 +545,7 @@
     transition: all 0.3s ease;
     
     &.dragover {
-      border-color: var(--primary-blue);
+      border-color: var(--primary-magenta);
       background: linear-gradient(135deg, #EBF8FF 0%, #DBEAFE 100%);
       transform: scale(1.02);
     }
@@ -556,7 +556,7 @@
       margin-bottom: var(--space-4);
       
       &::before {
-        content: '=Á';
+        content: '=ï¿½';
         display: block;
         font-size: 3rem;
         margin-bottom: var(--space-4);
@@ -564,7 +564,7 @@
     }
     
     .upload-button {
-      background: var(--primary-blue);
+      background: var(--primary-magenta);
       color: white;
       border: none;
       padding: var(--space-3) var(--space-6);
@@ -573,7 +573,7 @@
       cursor: pointer;
       
       &:hover {
-        background: var(--primary-blue-hover);
+        background: var(--primary-magenta-hover);
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
       }
@@ -629,7 +629,7 @@
       }
       
       &[data-value="book-cover"]::before {
-        content: '=Ö';
+        content: '=ï¿½';
       }
       
       &[data-value="avatar"]::before {
@@ -637,11 +637,11 @@
       }
       
       &[data-value="content"]::before {
-        content: '=¼';
+        content: '=ï¿½';
       }
       
       &[data-value="general"]::before {
-        content: '=Ä';
+        content: '=ï¿½';
       }
     }
   }
@@ -740,7 +740,7 @@
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+        background: linear-gradient(135deg, var(--primary-magenta) 0%, var(--primary-magenta-light) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -809,7 +809,7 @@
     
     &:focus {
       outline: none;
-      border-color: var(--primary-blue);
+      border-color: var(--primary-magenta);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
     
@@ -854,11 +854,11 @@
   text-decoration: none;
   
   &.btn-primary {
-    background: var(--primary-blue);
+    background: var(--primary-magenta);
     color: white;
     
     &:hover {
-      background: var(--primary-blue-hover);
+      background: var(--primary-magenta-hover);
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
@@ -913,7 +913,7 @@
     width: 40px;
     height: 40px;
     border: 3px solid var(--gray-200);
-    border-top: 3px solid var(--primary-blue);
+    border-top: 3px solid var(--primary-magenta);
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -982,8 +982,8 @@
     }
     
     &.active {
-      background: var(--primary-blue);
-      border-color: var(--primary-blue);
+      background: var(--primary-magenta);
+      border-color: var(--primary-magenta);
       color: white;
     }
   }
@@ -1225,7 +1225,7 @@
 
 /* Focus Management */
 *:focus {
-  outline: 2px solid var(--primary-blue);
+  outline: 2px solid var(--primary-magenta);
   outline-offset: 2px;
 }
 
@@ -1247,7 +1247,7 @@
   :root {
     --gray-300: #000000;
     --gray-600: #000000;
-    --primary-blue: #0000FF;
+    --primary-magenta: #E11D74;
   }
   
   .btn {

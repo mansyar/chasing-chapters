@@ -13,7 +13,7 @@ interface ColorPickerProps {
 }
 
 const defaultColors = [
-  '#3B82F6', // Blue
+  '#E11D74', // Blue
   '#EF4444', // Red
   '#10B981', // Green
   '#F59E0B', // Yellow
@@ -28,7 +28,7 @@ const defaultColors = [
 export const ColorPicker: React.FC<ColorPickerProps> = ({
   name,
   label,
-  value = '#3B82F6',
+  value = '#E11D74',
   onChange,
   required,
   readOnly,
@@ -38,8 +38,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   const [showCustom, setShowCustom] = useState(false)
 
   useEffect(() => {
-    setSelectedColor(value || '#3B82F6')
-    setCustomColor(value || '#3B82F6')
+    setSelectedColor(value || '#E11D74')
+    setCustomColor(value || '#E11D74')
   }, [value])
 
   const handleColorChange = (color: string) => {
@@ -263,9 +263,9 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                       handleColorChange(newColor)
                     }
                   }}
-                  placeholder="#3B82F6"
+                  placeholder="#E11D74"
                   pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                  title="Enter a valid hex color (e.g., #3B82F6)"
+                  title="Enter a valid hex color (e.g., #E11D74)"
                 />
                 <input
                   type="color"

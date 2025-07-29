@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Share2, Twitter, Facebook, Linkedin, Link2, Check } from 'lucide-react'
 
 interface SocialShareProps {
@@ -28,6 +28,12 @@ export default function SocialShare({
 }: SocialShareProps) {
   const [copied, setCopied] = useState(false)
   const [shareError, setShareError] = useState<string | null>(null)
+  const [canShare, setCanShare] = useState(false)
+
+  // Check for native sharing support after component mounts
+  useEffect(() => {
+    setCanShare(typeof navigator !== 'undefined' && typeof navigator.share === 'function')
+  }, [])
 
   // Ensure URL is absolute
   const shareUrl = url.startsWith('http') 
@@ -139,7 +145,7 @@ export default function SocialShare({
       
       <div className="flex items-center space-x-2">
         {/* Native Share Button (mobile) */}
-        {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
+        {canShare && (
           <button
             onClick={handleNativeShare}
             className={`${baseButtonClasses} ${buttonVariants[variant]}`}

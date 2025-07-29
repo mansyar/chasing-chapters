@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Star, Calendar, User, BookOpen } from 'lucide-react'
 import { Review, Media, Tag } from '@/payload-types'
-import { formatDateShort, truncateText } from '@/lib/utils'
+import { formatDateShort, truncateText, cn } from '@/lib/utils'
 import { OptimizedImage } from '@/components/common'
 
 interface ReviewCardProps {
@@ -10,9 +10,16 @@ interface ReviewCardProps {
     tags?: (number | Tag)[]
   }
   showReadingStatus?: boolean
+  showExcerpt?: boolean
+  className?: string
 }
 
-export default function ReviewCard({ review, showReadingStatus = true }: ReviewCardProps) {
+export default function ReviewCard({ 
+  review, 
+  showReadingStatus = true, 
+  showExcerpt = true,
+  className 
+}: ReviewCardProps) {
   const {
     title,
     slug,
@@ -69,7 +76,7 @@ export default function ReviewCard({ review, showReadingStatus = true }: ReviewC
   }
 
   return (
-    <article className="card card-hover group">
+    <article className={cn("card card-hover group", className)}>
       <div className="relative">
         {/* Cover Image */}
         <div className="aspect-[3/4] relative overflow-hidden">
@@ -115,9 +122,11 @@ export default function ReviewCard({ review, showReadingStatus = true }: ReviewC
         </div>
 
         {/* Excerpt */}
-        <p className="text-neutral-700 text-sm mb-4 line-clamp-3">
-          {truncateText(excerpt, 120)}
-        </p>
+        {showExcerpt && (
+          <p className="text-neutral-700 text-sm mb-4 line-clamp-3">
+            {truncateText(excerpt, 120)}
+          </p>
+        )}
 
         {/* Tags */}
         {tags && tags.length > 0 && (

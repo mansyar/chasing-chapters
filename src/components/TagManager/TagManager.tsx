@@ -36,7 +36,7 @@ export const TagManager: React.FC<TagManagerProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newTagName, setNewTagName] = useState('')
-  const [newTagColor, setNewTagColor] = useState('#3B82F6')
+  const [newTagColor, setNewTagColor] = useState('#E11D74')
   const [filteredTags, setFilteredTags] = useState<Tag[]>([])
 
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -124,7 +124,7 @@ export const TagManager: React.FC<TagManagerProps> = ({
         setTags(prev => [...prev, newTag])
         addTag(newTag)
         setNewTagName('')
-        setNewTagColor('#3B82F6')
+        setNewTagColor('#E11D74')
         setShowCreateModal(false)
         toast.success(`Tag "${newTag.name}" created successfully`)
       } else {
@@ -540,7 +540,7 @@ export const TagManager: React.FC<TagManagerProps> = ({
                 onClick={() => {
                   setShowCreateModal(false)
                   setNewTagName('')
-                  setNewTagColor('#3B82F6')
+                  setNewTagColor('#E11D74')
                 }}
               >
                 Cancel
