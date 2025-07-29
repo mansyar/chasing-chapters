@@ -6,6 +6,9 @@ import config from '@/payload.config'
 import { PageWrapper } from '@/components/layout'
 import { Tag } from '@/payload-types'
 
+// Force dynamic rendering since we need database access
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Browse Tags - Chasing Chapters',
   description: 'Explore book reviews by topic, genre, and theme. Find your next great read through our organized tag system.',
