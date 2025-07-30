@@ -95,6 +95,15 @@ export function GlobalSearch() {
     }
   }
 
+  // Handle keyboard navigation on the button
+  const handleButtonKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      setIsOpen(true)
+      setTimeout(() => inputRef.current?.focus(), 0)
+    }
+  }
+
   // Handle clicking outside to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -115,8 +124,10 @@ export function GlobalSearch() {
           setIsOpen(true)
           setTimeout(() => inputRef.current?.focus(), 0)
         }}
+        onKeyDown={handleButtonKeyDown}
         className="text-neutral-500 hover:text-neutral-700 transition-colors p-2 rounded-lg hover:bg-neutral-100"
         title="Search reviews"
+        data-testid="global-search-button"
       >
         <Search className="h-5 w-5" />
         <span className="sr-only">Search</span>
@@ -129,7 +140,7 @@ export function GlobalSearch() {
           <div className="fixed inset-0 bg-black bg-opacity-20 z-40" />
           
           {/* Search Panel */}
-          <div className="absolute top-full right-0 mt-2 w-screen max-w-md bg-white rounded-lg shadow-lg border border-neutral-200 z-50 overflow-hidden">
+          <div className="absolute top-full right-0 mt-2 w-screen max-w-md bg-white rounded-lg shadow-lg border border-neutral-200 z-50 overflow-hidden" data-testid="global-search-modal">
             {/* Search Input */}
             <form onSubmit={handleSubmit} className="p-4 border-b border-neutral-100">
               <div className="relative">
@@ -142,6 +153,7 @@ export function GlobalSearch() {
                   onKeyDown={handleKeyDown}
                   placeholder="Search reviews, authors, topics..."
                   className="w-full pl-10 pr-10 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                  data-testid="global-search-input"
                 />
                 {query && (
                   <button

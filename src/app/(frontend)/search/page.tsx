@@ -288,14 +288,9 @@ function SearchPageContent() {
                         onClick={() => toggleTag(tag.slug)}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                           selectedTags.includes(tag.slug)
-                            ? 'text-white'
+                            ? 'bg-primary-600 text-white'
                             : 'bg-white text-neutral-700 border border-neutral-300 hover:border-neutral-400'
                         }`}
-                        style={
-                          selectedTags.includes(tag.slug) && tag.color
-                            ? { backgroundColor: tag.color }
-                            : {}
-                        }
                       >
                         {tag.name}
                       </button>

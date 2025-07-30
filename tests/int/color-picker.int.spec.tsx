@@ -76,7 +76,7 @@ describe('ColorPicker Component', () => {
       fireEvent.click(customButton)
     })
     
-    expect(await screen.findByPlaceholderText('#3B82F6')).toBeInTheDocument()
+    expect(await screen.findByPlaceholderText('#E11D74')).toBeInTheDocument()
     // Look for the text input specifically (not the hidden or color input)
     const textInput = await screen.findByRole('textbox')
     expect(textInput).toHaveValue('#3B82F6')
@@ -88,7 +88,7 @@ describe('ColorPicker Component', () => {
     const customButton = screen.getByText('Custom')
     fireEvent.click(customButton)
     
-    const hexInput = await screen.findByPlaceholderText('#3B82F6')
+    const hexInput = await screen.findByPlaceholderText('#E11D74')
     fireEvent.change(hexInput, { target: { value: '#FF5733' } })
     
     expect(mockOnChange).toHaveBeenCalledWith('#FF5733')
@@ -114,7 +114,7 @@ describe('ColorPicker Component', () => {
     const customButton = screen.getByText('Custom')
     fireEvent.click(customButton)
     
-    const hexInput = await screen.findByPlaceholderText('#3B82F6')
+    const hexInput = await screen.findByPlaceholderText('#E11D74')
     
     // Invalid hex color
     fireEvent.change(hexInput, { target: { value: 'invalid' } })

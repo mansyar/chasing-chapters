@@ -17,11 +17,31 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
+    "test:e2e:headed": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --headed",
+    "test:e2e:debug": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --debug",
+    "test:e2e:chrome": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --project=chromium",
+    "test:e2e:firefox": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --project=firefox",
+    "test:e2e:safari": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --project=webkit",
+    "test:e2e:mobile": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --project=mobile-chrome --project=mobile-safari",
+    "test:e2e:accessibility": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --project=accessibility",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
+    "test:int:coverage": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts --coverage",
+    "test:int:watch": "cross-env NODE_OPTIONS=--no-deprecation vitest --config ./vitest.config.mts",
+    "test:coverage": "pnpm run test:int:coverage && pnpm run test:e2e",
     "docker:up": "docker-compose -f docker-compose.dev.yml up -d",
     "docker:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:logs": "docker-compose -f docker-compose.dev.yml logs -f",
-    "docker:reset": "docker-compose -f docker-compose.dev.yml down -v && docker-compose -f docker-compose.dev.yml up -d"
+    "docker:reset": "docker-compose -f docker-compose.dev.yml down -v && docker-compose -f docker-compose.dev.yml up -d",
+    "analyze": "cross-env ANALYZE=true NODE_OPTIONS=--no-deprecation next build",
+    "lighthouse": "lighthouse http://localhost:3000 --output json --output html --chrome-flags=\"--headless\" --no-enable-error-reporting",
+    "perf:build": "pnpm run build && pnpm run analyze",
+    "perf:test": "pnpm run build && pnpm run lighthouse",
+    "test:performance": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test tests/performance --config=playwright.config.ts --project=chromium",
+    "test:security": "pnpm audit --audit-level moderate && pnpm run security:scan",
+    "security:scan": "npx retire --path ./src --outputformat json --outputpath security-report.json || true",
+    "test:load": "npx artillery run tests/load/artillery.yml --output load-test-report.json",
+    "test:load:quick": "npx artillery quick --count 50 --num 10 http://localhost:3000",
+    "test:load:report": "npx artillery report load-test-report.json"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.10.2",
@@ -67,7 +87,9 @@
     "tsx": "^4.20.3",
     "typescript": "5.7.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.3"
+    "vitest": "3.2.3",
+    "web-vitals": "^4.2.4",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "engines": {
     "node": "^18.20.2 || >=20.9.0",

@@ -1,0 +1,107 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm up phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    # Ramp up phase
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 20
+      name: "Ramp up load"
+    # Sustained load phase
+    - duration: 300
+      arrivalRate: 20
+      name: "Sustained load"
+    # Peak load phase
+    - duration: 60
+      arrivalRate: 50
+      name: "Peak load"
+  defaults:
+    headers:
+      User-Agent: 'Artillery Load Test'
+  # Performance thresholds
+  expect:
+    - statusCode: 200
+    - contentType: text/html
+    - maxResponseTime: 2000 # 2 seconds max response time
+  # Metrics and reporting
+  plugins:
+    expect: {}
+  processor: "./load-test-processor.js"
+
+scenarios:
+  # Homepage load test
+  - name: "Homepage Load Test"
+    weight: 40
+    flow:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1500
+          capture:
+            - json: "$.length"
+              as: "pageSize"
+
+  # Search functionality load test
+  - name: "Search Load Test"
+    weight: 30
+    flow:
+      - get:
+          url: "/search"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 2000
+      - post:
+          url: "/api/search"
+          json:
+            query: "{{ $randomString() }}"
+            limit: 10
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1000
+
+  # Review pages load test
+  - name: "Review Pages Load Test"
+    weight: 20
+    flow:
+      - get:
+          url: "/reviews"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1500
+      # Test individual review page (would need actual slugs in real scenario)
+      - get:
+          url: "/reviews/sample-review"
+          expect:
+            - statusCode: [200, 404] # 404 is acceptable for non-existent reviews
+
+  # API endpoints load test
+  - name: "API Load Test"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/books/search?q=fiction"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1500
+      - get:
+          url: "/api/tags"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1000
+
+  # Static assets load test
+  - name: "Static Assets Load Test"
+    weight: 5
+    flow:
+      - get:
+          url: "/_next/static/css/{{ $randomString() }}"
+          expect:
+            - statusCode: [200, 404] # Assets might not exist, that's OK
+      - get:
+          url: "/favicon.ico"
+          expect:
+            - statusCode: 200

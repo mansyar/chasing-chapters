@@ -13,6 +13,9 @@ export const metadata = {
   description: 'Books I am currently reading and my reading progress.',
 }
 
+// Force dynamic rendering since we need database access
+export const dynamic = 'force-dynamic'
+
 export default async function CurrentlyReadingPage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

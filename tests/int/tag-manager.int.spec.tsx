@@ -226,7 +226,7 @@ describe('TagManager Component', () => {
   })
 
   it('should create new tag when form is submitted', async () => {
-    const newTag = { id: '4', name: 'New Tag', slug: 'new-tag', color: '#3B82F6' }
+    const newTag = { id: '4', name: 'New Tag', slug: 'new-tag', color: '#E11D74' }
     ;(fetch as any).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve(newTag),
@@ -275,7 +275,7 @@ describe('TagManager Component', () => {
       credentials: 'include',
       body: JSON.stringify({
         name: 'New Tag',
-        color: '#3B82F6',
+        color: '#E11D74',
       }),
     })
   })

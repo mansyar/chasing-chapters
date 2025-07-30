@@ -422,7 +422,9 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 
 # Build application
-RUN corepack enable pnpm && pnpm build
+RUN corepack enable pnpm && \
+    pnpm generate:types && \
+    pnpm build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -439,12 +441,19 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Create uploads directory
+RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
+
 USER nextjs
 
 EXPOSE 3000
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
 
 CMD ["node", "server.js"]
 ```
@@ -544,6 +553,420 @@ docker-compose exec -T db psql -U chasingchapters chasing_chapters < backup.sql
 git pull
 docker-compose --env-file .env.docker up -d --build app
 ```
+
+## Coolify Deployment on VPS
+
+[Coolify](https://coolify.io) is an open-source, self-hosted alternative to Heroku that makes deploying Docker applications simple. This section covers deploying Chasing Chapters using Coolify on a VPS.
+
+### Prerequisites for Coolify Deployment
+
+**VPS Requirements:**
+- CPU: 2+ vCPUs (4+ recommended)
+- RAM: 4GB minimum (8GB recommended)
+- Storage: 50GB+ SSD
+- OS: Ubuntu 22.04 LTS or Debian 11+
+- Docker and Docker Compose installed
+- Domain with DNS access
+
+### Coolify Installation
+
+#### 1. Server Preparation
+
+```bash
+#!/bin/bash
+# coolify-server-setup.sh
+
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install required packages
+sudo apt install -y curl wget git htop
+
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+
+# Install Docker Compose (if not included)
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Reboot to apply Docker group changes
+echo "Rebooting server in 10 seconds..."
+sleep 10
+sudo reboot
+```
+
+#### 2. Install Coolify
+
+```bash
+# Install Coolify (run after server reboot)
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+
+# The installation will:
+# - Install Coolify on port 8000
+# - Set up SSL automatically with Let's Encrypt
+# - Create initial admin user
+```
+
+#### 3. Access Coolify Dashboard
+
+1. Navigate to `https://your-server-ip:8000` or `https://coolify.yourdomain.com`
+2. Complete the initial setup wizard
+3. Create your admin account
+4. Configure your server settings
+
+### Coolify Project Configuration
+
+#### 1. Create New Project
+
+1. **Login to Coolify Dashboard**
+2. **Create Project:**
+   - Click "New Project"
+   - Name: `chasing-chapters`
+   - Description: `Personal book review platform`
+
+#### 2. Add Git Repository
+
+1. **Source Control:**
+   - Go to "Sources" → "Add Source"
+   - Type: GitHub/GitLab/Custom Git
+   - Repository URL: `https://github.com/your-username/chasing-chapters.git`
+   - Branch: `main`
+   - Add deploy key if private repository
+
+#### 3. Database Setup (PostgreSQL)
+
+1. **Add Database Service:**
+   - Go to project → "Add Service" → "Database"
+   - Type: PostgreSQL 14
+   - Service name: `chasing-chapters-db`
+   - Database: `chasing_chapters`
+   - Username: `chasingchapters`
+   - Password: Generate secure password
+   - Port: `5432` (internal)
+
+2. **Database Configuration:**
+   ```yaml
+   # Database service configuration in Coolify
+   POSTGRES_DB: chasing_chapters
+   POSTGRES_USER: chasingchapters
+   POSTGRES_PASSWORD: your_generated_password
+   POSTGRES_HOST_AUTH_METHOD: md5
+   ```
+
+#### 4. Application Service Configuration
+
+1. **Add Application Service:**
+   - Go to project → "Add Service" → "Application"
+   - Source: Select your Git repository
+   - Build pack: Docker
+   - Dockerfile path: `./Dockerfile`
+   - Build command: `docker build -t chasing-chapters .`
+
+2. **Build Configuration:**
+   ```yaml
+   # Build settings
+   Build Context: ./
+   Dockerfile: ./Dockerfile
+   Build Arguments:
+     - NODE_ENV=production
+     - NEXT_TELEMETRY_DISABLED=1
+   ```
+
+3. **Runtime Configuration:**
+   ```yaml
+   # Application settings
+   Port: 3000
+   Health Check Path: /api/health
+   Health Check Interval: 30s
+   Restart Policy: unless-stopped
+   CPU Limit: 2
+   Memory Limit: 2GB
+   ```
+
+#### 5. Environment Variables
+
+Configure these environment variables in Coolify:
+
+```bash
+# Application Settings
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+FRONTEND_URL=https://yourdomain.com
+NEXT_TELEMETRY_DISABLED=1
+
+# Payload CMS Configuration
+PAYLOAD_SECRET=your-32-character-secret-key-here
+DATABASE_URI=postgres://chasingchapters:your_db_password@chasing-chapters-db:5432/chasing_chapters
+
+# Cloudflare R2 Storage
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_BUCKET=chasing-chapters-prod
+R2_ENDPOINT=https://your-account.r2.cloudflarestorage.com
+R2_PUBLIC_URL=https://cdn.yourdomain.com
+
+# Google Books API
+GOOGLE_BOOKS_API_KEY=your-google-books-api-key
+
+# Security
+COOKIE_DOMAIN=.yourdomain.com
+
+# Email Configuration (Optional)
+SMTP_HOST=smtp.mailgun.org
+SMTP_PORT=587
+SMTP_USER=postmaster@yourdomain.com
+SMTP_PASS=your-mailgun-password
+FROM_EMAIL=noreply@yourdomain.com
+NOTIFICATION_EMAIL=admin@yourdomain.com
+```
+
+#### 6. Domain and SSL Configuration
+
+1. **Add Custom Domain:**
+   - Go to application → "Domains"
+   - Add domain: `yourdomain.com`
+   - Add www redirect: `www.yourdomain.com` → `yourdomain.com`
+
+2. **SSL Certificate:**
+   - Coolify automatically provisions Let's Encrypt certificates
+   - Enable "Force HTTPS redirect"
+   - Auto-renewal is handled automatically
+
+3. **DNS Configuration:**
+   ```dns
+   # DNS records to add to your domain provider
+   A     @           your-server-ip
+   A     www         your-server-ip
+   CNAME cdn         your-r2-endpoint
+   ```
+
+### Coolify Deployment Workflow
+
+#### 1. Automated Deployment Setup
+
+1. **Webhook Configuration:**
+   - Go to application → "Deployments" → "Webhooks"
+   - Enable "Deploy on push"
+   - Copy webhook URL
+   - Add webhook to your Git repository
+
+2. **Build Pipeline:**
+   ```yaml
+   # Coolify automatically handles:
+   # 1. Git clone/pull
+   # 2. Docker build with caching
+   # 3. Container deployment with zero-downtime
+   # 4. Health checks and rollback if needed
+   # 5. Old container cleanup
+   ```
+
+#### 2. Manual Deployment
+
+```bash
+# Deploy via Coolify UI
+1. Go to application dashboard
+2. Click "Deploy" button
+3. Monitor deployment logs
+4. Verify health checks pass
+
+# Deploy via Coolify CLI (optional)
+coolify deploy --project chasing-chapters --service app
+```
+
+#### 3. Database Migration
+
+```bash
+# Connect to your application container
+coolify exec chasing-chapters-app bash
+
+# Run database migrations if needed
+pnpm payload migrate
+
+# Or run any other Payload commands
+pnpm generate:types
+```
+
+### Coolify Management & Monitoring
+
+#### 1. Application Monitoring
+
+1. **Resource Monitoring:**
+   - CPU, Memory, Disk usage
+   - Network traffic
+   - Container health status
+
+2. **Log Management:**
+   - Real-time log streaming
+   - Log aggregation and search
+   - Download logs for analysis
+
+3. **Backup Configuration:**
+   ```yaml
+   # Automatic database backups
+   Backup Schedule: "0 2 * * *"  # Daily at 2 AM
+   Retention: 30 days
+   Storage: Local or S3-compatible
+   ```
+
+#### 2. Scaling Configuration
+
+```yaml
+# Horizontal scaling (if needed)
+Replicas: 1 (increase for high traffic)
+Load Balancer: Coolify handles automatically
+
+# Vertical scaling
+CPU Limit: 2 cores → 4 cores
+Memory Limit: 2GB → 4GB
+```
+
+#### 3. Maintenance Operations
+
+1. **Application Updates:**
+   - Automatic deployment on git push
+   - Manual deployment via UI
+   - Rollback to previous versions
+
+2. **Database Management:**
+   - Backup and restore via UI
+   - Direct database access via terminal
+   - Migration management
+
+3. **SSL Certificate Management:**
+   - Automatic renewal (Let's Encrypt)
+   - Custom certificate upload
+   - Certificate monitoring
+
+### Coolify Backup & Recovery
+
+#### 1. Automated Backup Setup
+
+```yaml
+# Database Backup Configuration
+Service: chasing-chapters-db
+Schedule: "0 2 * * *"  # Daily at 2 AM
+Retention: 30 days
+Compression: gzip
+Notification: Email on failure
+
+# File Backup (if using local storage)
+Path: /app/uploads
+Schedule: "0 3 * * *"  # Daily at 3 AM
+Destination: S3 or local storage
+```
+
+#### 2. Manual Backup Commands
+
+```bash
+# Database backup via Coolify
+coolify backup create --service chasing-chapters-db
+
+# Application backup
+coolify backup create --service chasing-chapters-app --include-volumes
+
+# Download backup
+coolify backup download --backup-id <backup-id>
+```
+
+#### 3. Disaster Recovery
+
+```bash
+# Restore database from backup
+coolify backup restore --service chasing-chapters-db --backup-id <backup-id>
+
+# Restore application
+coolify service recreate --service chasing-chapters-app
+
+# Verify application health
+coolify service logs --service chasing-chapters-app --follow
+```
+
+### Coolify vs Traditional Deployment
+
+| Feature | Coolify | Traditional VPS |
+|---------|---------|-----------------|
+| **Setup Time** | 15 minutes | 2-4 hours |
+| **SSL Management** | Automatic | Manual |
+| **Deployment** | Git-based | Manual/Scripts |
+| **Monitoring** | Built-in UI | Custom setup |
+| **Scaling** | UI-based | Manual config |
+| **Backups** | Automated | Manual scripts |
+| **Zero-downtime** | Automatic | Manual config |
+| **Rollbacks** | One-click | Manual |
+
+### Coolify Troubleshooting
+
+#### Common Issues and Solutions
+
+1. **Build Failures:**
+   ```bash
+   # Check build logs
+   coolify service logs --service chasing-chapters-app --build
+
+   # Common fixes:
+   # - Verify Dockerfile syntax
+   # - Check environment variables
+   # - Ensure all dependencies in package.json
+   ```
+
+2. **Database Connection Issues:**
+   ```bash
+   # Verify database service is running
+   coolify service status --service chasing-chapters-db
+
+   # Check connection string format
+   # Format: postgres://user:password@service-name:5432/database
+   ```
+
+3. **SSL Certificate Issues:**
+   ```bash
+   # Regenerate SSL certificate
+   coolify domain refresh-ssl --domain yourdomain.com
+
+   # Check DNS propagation
+   dig yourdomain.com
+   ```
+
+4. **Application Health Check Failures:**
+   ```bash
+   # Check application logs
+   coolify service logs --service chasing-chapters-app --follow
+
+   # Verify health endpoint
+   curl https://yourdomain.com/api/health
+   ```
+
+### Performance Optimization for Coolify
+
+#### 1. Resource Allocation
+
+```yaml
+# Optimal resource settings for Chasing Chapters
+Application:
+  CPU: 2 cores (4 for high traffic)
+  Memory: 2GB (4GB for high traffic)
+  
+Database:
+  CPU: 1 core (2 for high load)
+  Memory: 1GB (2GB for large datasets)
+```
+
+#### 2. Caching Configuration
+
+```yaml
+# Enable caching in Coolify
+Redis Service:
+  Name: chasing-chapters-cache
+  Memory: 512MB
+  Persistence: No (cache only)
+
+# Update application environment
+REDIS_URL: redis://chasing-chapters-cache:6379
+ENABLE_CACHE: true
+```
+
+This comprehensive Coolify deployment section provides everything needed to deploy Chasing Chapters using Coolify on a VPS, with automatic SSL, monitoring, backups, and easy management through a web interface.
 
 ## CI/CD Pipeline
 

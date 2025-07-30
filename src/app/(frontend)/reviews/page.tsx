@@ -12,6 +12,9 @@ export const metadata = {
   description: 'Browse all book reviews, ratings, and reading recommendations on Chasing Chapters.',
 }
 
+// Force dynamic rendering since we need database access
+export const dynamic = 'force-dynamic'
+
 export default async function ReviewsPage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

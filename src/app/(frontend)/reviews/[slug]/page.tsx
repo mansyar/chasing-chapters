@@ -10,6 +10,10 @@ import { OptimizedImage, SocialShare } from '@/components/common'
 import { Review, Media, Tag } from '@/payload-types'
 import { formatDate, formatDateShort } from '@/lib/utils'
 import { generateReviewMetadata } from '@/lib/metadata'
+import { generateReviewSchema, generateBreadcrumbSchema, StructuredData } from '@/lib/structured-data'
+
+// Force dynamic rendering since we need database access for metadata and content
+export const dynamic = 'force-dynamic'
 
 interface ReviewPageProps {
   params: Promise<{
@@ -81,6 +85,14 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
   const review = reviews.docs[0] as Review & { coverImage?: Media; tags?: (number | Tag)[] }
 
+  // Generate structured data
+  const reviewSchema = generateReviewSchema(review)
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Reviews', url: '/reviews' },
+    { name: `${review.title} by ${review.author}`, url: `/reviews/${review.slug}` }
+  ])
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center space-x-1">
@@ -142,6 +154,10 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
   return (
     <>
+      {/* Structured Data */}
+      <StructuredData schema={reviewSchema} />
+      <StructuredData schema={breadcrumbSchema} />
+
       {/* Back Navigation */}
       <PageWrapper padding="md">
         <Link
@@ -241,7 +257,6 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
                         key={tag.id}
                         href={`/tags/${tag.slug}`}
                         className="px-3 py-1 text-sm font-medium rounded-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition-colors"
-                        style={tag.color ? { backgroundColor: `${tag.color}20`, color: tag.color } : {}}
                       >
                         {tag.name}
                       </Link>

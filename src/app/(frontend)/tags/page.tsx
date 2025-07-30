@@ -97,11 +97,10 @@ export default async function TagsPage() {
                 >
                   <div 
                     className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                    style={tag.color ? { backgroundColor: `${tag.color}20` } : { backgroundColor: '#f3f4f6' }}
+                    style={{ backgroundColor: '#f3f4f6' }}
                   >
                     <TagIcon 
-                      className="h-8 w-8 group-hover:scale-110 transition-transform duration-200"
-                      style={tag.color ? { color: tag.color } : { color: '#6b7280' }}
+                      className="h-8 w-8 group-hover:scale-110 transition-transform duration-200 text-neutral-500"
                     />
                   </div>
                   <h3 className="text-xl font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors mb-2">
@@ -153,11 +152,6 @@ export default async function TagsPage() {
                       key={tag.id}
                       href={`/tags/${tag.slug}`}
                       className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 bg-white border border-neutral-200 text-neutral-700 hover:border-neutral-300 hover:shadow-md"
-                      style={tag.color ? { 
-                        backgroundColor: `${tag.color}10`, 
-                        borderColor: `${tag.color}30`,
-                        color: tag.color 
-                      } : {}}
                     >
                       <TagIcon className="h-3 w-3 mr-2" />
                       {tag.name}
