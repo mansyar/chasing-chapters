@@ -2,12 +2,85 @@ import { withPayload } from '@payloadcms/next/withPayload'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Your Next.js config here
-  webpack: (webpackConfig) => {
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  
+  // Docker deployment configuration
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
+
+  // Server external packages (moved from experimental)
+  serverExternalPackages: ['sharp'],
+
+  // Webpack optimizations
+  webpack: (webpackConfig, { buildId, dev, isServer, defaultLoaders, nextRuntime }) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
+    }
+
+    // Bundle analyzer support
+    if (process.env.ANALYZE === 'true') {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+      webpackConfig.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: false,
+          reportFilename: isServer ? 'server-bundle-analyzer.html' : 'client-bundle-analyzer.html',
+        })
+      )
+    }
+
+    // Optimize bundle splitting
+    if (!isServer) {
+      webpackConfig.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Vendor chunk
+          vendor: {
+            name: 'vendor',
+            chunks: 'all',
+            test: /node_modules/,
+            priority: 20,
+          },
+          // Common chunk for shared code
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 10,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+          // Large libraries get their own chunks  
+          react: {
+            name: 'react',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            priority: 40,
+          },
+          payload: {
+            name: 'payload',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
+            priority: 30,
+          },
+        },
+      }
+    }
+
+    // Tree shaking optimization
+    if (!dev) {
+      webpackConfig.optimization.usedExports = true
+      webpackConfig.optimization.sideEffects = false
     }
 
     return webpackConfig

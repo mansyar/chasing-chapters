@@ -184,3 +184,133 @@ if (typeof window === 'undefined') { // Only run on server
 }
 
 export { SimpleCache, RateLimiter }
+
+// HTTP Caching utilities for Next.js API routes
+import { NextResponse } from 'next/server'
+
+interface CacheOptions {
+  maxAge?: number
+  staleWhileRevalidate?: number
+  mustRevalidate?: boolean
+  private?: boolean
+  noStore?: boolean
+  noCache?: boolean
+  etag?: string
+  lastModified?: Date
+}
+
+/**
+ * Generate Cache-Control header string
+ */
+export function generateCacheControl({
+  maxAge = 0,
+  staleWhileRevalidate,
+  mustRevalidate = false,
+  private: isPrivate = false,
+  noStore = false,
+  noCache = false,
+}: CacheOptions): string {
+  const directives: string[] = []
+
+  if (noStore) {
+    directives.push('no-store')
+    return directives.join(', ')
+  }
+
+  if (noCache) {
+    directives.push('no-cache')
+    return directives.join(', ')
+  }
+
+  // Public or private
+  directives.push(isPrivate ? 'private' : 'public')
+
+  // Max age
+  directives.push(`max-age=${maxAge}`)
+
+  // Stale while revalidate
+  if (staleWhileRevalidate) {
+    directives.push(`stale-while-revalidate=${staleWhileRevalidate}`)
+  }
+
+  // Must revalidate
+  if (mustRevalidate) {
+    directives.push('must-revalidate')
+  }
+
+  return directives.join(', ')
+}
+
+/**
+ * Set caching headers on NextResponse
+ */
+export function setCacheHeaders(
+  response: NextResponse,
+  options: CacheOptions
+): NextResponse {
+  const cacheControl = generateCacheControl(options)
+  response.headers.set('Cache-Control', cacheControl)
+
+  if (options.etag) {
+    response.headers.set('ETag', options.etag)
+  }
+
+  if (options.lastModified) {
+    response.headers.set('Last-Modified', options.lastModified.toUTCString())
+  }
+
+  return response
+}
+
+/**
+ * Generate ETag from content
+ */
+export function generateETag(content: string | object): string {
+  const str = typeof content === 'string' ? content : JSON.stringify(content)
+  
+  // Simple hash function for ETag
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32-bit integer
+  }
+  
+  return `"${Math.abs(hash).toString(36)}"`
+}
+
+/**
+ * Cache configurations for different content types
+ */
+export const cacheConfigs = {
+  // API responses - short cache with revalidation
+  api: {
+    maxAge: 300, // 5 minutes
+    staleWhileRevalidate: 600, // 10 minutes
+    mustRevalidate: true,
+  },
+
+  // Reviews - moderate cache (updated infrequently)
+  reviews: {
+    maxAge: 1800, // 30 minutes
+    staleWhileRevalidate: 3600, // 1 hour
+  },
+
+  // Search results - short cache (dynamic content)
+  search: {
+    maxAge: 300, // 5 minutes
+    staleWhileRevalidate: 600, // 10 minutes
+  },
+
+  // Tags - longer cache (stable content)
+  tags: {
+    maxAge: 3600, // 1 hour
+    staleWhileRevalidate: 7200, // 2 hours
+  },
+
+  // No cache for admin/dynamic content
+  noCache: {
+    noCache: true,
+    mustRevalidate: true,
+  },
+} as const

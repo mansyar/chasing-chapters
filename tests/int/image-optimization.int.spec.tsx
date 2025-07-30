@@ -1,14 +1,17 @@
 import React from 'react'
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import { OptimizedImage } from '@/components/common'
 import { BookOpen } from 'lucide-react'
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
-  default: ({ src, alt, onLoad, onError, ...props }: any) => {
+  default: ({ src, alt, onLoad, onError, blurDataURL, placeholder, ...props }: any) => {
     const handleLoad = () => onLoad?.()
     const handleError = () => onError?.()
+    
+    // Filter out Next.js specific props that shouldn't be on DOM elements
+    const { priority, quality, sizes, fill, width, height, loading, ...domProps } = props
     
     return React.createElement('img', {
       src,
@@ -16,7 +19,10 @@ vi.mock('next/image', () => ({
       onLoad: handleLoad,
       onError: handleError,
       'data-testid': 'next-image',
-      ...props
+      placeholder,
+      quality,
+      sizes,
+      ...domProps
     })
   }
 }))
@@ -86,7 +92,9 @@ describe('OptimizedImage Component', () => {
     const image = screen.getByTestId('next-image')
     
     // Simulate image load
-    image.dispatchEvent(new Event('load'))
+    await act(async () => {
+      image.dispatchEvent(new Event('load'))
+    })
     
     expect(onLoad).toHaveBeenCalledTimes(1)
   })
@@ -107,7 +115,9 @@ describe('OptimizedImage Component', () => {
     const image = screen.getByTestId('next-image')
     
     // Simulate image error
-    image.dispatchEvent(new Event('error'))
+    await act(async () => {
+      image.dispatchEvent(new Event('error'))
+    })
     
     expect(onError).toHaveBeenCalledTimes(1)
   })

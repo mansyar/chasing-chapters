@@ -106,7 +106,7 @@ export default function ReviewCard({
         {/* Title & Author */}
         <div className="mb-3">
           <h3 className="text-xl font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors line-clamp-2">
-            <Link href={`/reviews/${slug}`}>
+            <Link href={`/reviews/${slug}`} data-testid="review-card-link">
               {title}
             </Link>
           </h3>
@@ -140,7 +140,6 @@ export default function ReviewCard({
                   key={tag.id}
                   href={`/tags/${tag.slug}`}
                   className="px-2 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition-colors"
-                  style={tag.color ? { backgroundColor: `${tag.color}20`, color: tag.color } : {}}
                 >
                   {tag.name}
                 </Link>
@@ -165,6 +164,7 @@ export default function ReviewCard({
           <Link
             href={`/reviews/${slug}`}
             className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
+            data-testid="review-card-link"
           >
             Read Review
             <span className="ml-1">→</span>

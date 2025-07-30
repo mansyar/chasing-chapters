@@ -31,7 +31,7 @@ export function generateSiteMetadata({
   tags
 }: SiteMetadata): Metadata {
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`
-  const canonicalUrl = url.startsWith('http') ? url : `https://chasingchapters.com${url}`
+  const canonicalUrl = url.startsWith('http') ? url : `https://chasing-chapters.com${url}`
   
   // Base metadata
   const metadata: Metadata = {
@@ -105,7 +105,7 @@ export function generateSiteMetadata({
 export const siteConfig = {
   name: 'Chasing Chapters',
   description: 'A personal book review blog where literature comes alive through thoughtful reviews and reading adventures.',
-  url: 'https://chasingchapters.com',
+  url: 'https://chasing-chapters.com',
   ogImage: '/og-default.jpg', // Default fallback image
   author: 'Chasing Chapters',
   twitterHandle: '@chasingchapters',

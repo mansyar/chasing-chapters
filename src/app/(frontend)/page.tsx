@@ -10,6 +10,9 @@ import { ReviewGrid } from '@/components/reviews'
 import { SocialShareInline } from '@/components/common'
 import { Review, Media, Tag } from '@/payload-types'
 
+// Force dynamic rendering since we need database access
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config

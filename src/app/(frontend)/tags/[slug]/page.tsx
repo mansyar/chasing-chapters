@@ -8,6 +8,9 @@ import { PageWrapper } from '@/components/layout'
 import { ReviewGrid } from '@/components/reviews'
 import { Review, Media, Tag } from '@/payload-types'
 
+// Force dynamic rendering since we need database access for metadata and content
+export const dynamic = 'force-dynamic'
+
 interface TagPageProps {
   params: Promise<{
     slug: string
@@ -104,11 +107,10 @@ export default async function TagPage({ params }: TagPageProps) {
             <div className="flex justify-center mb-6">
               <div 
                 className="p-4 rounded-full shadow-lg"
-                style={tag.color ? { backgroundColor: `${tag.color}20` } : { backgroundColor: '#f3f4f6' }}
+                style={{ backgroundColor: '#f3f4f6' }}
               >
                 <TagIcon 
-                  className="h-12 w-12"
-                  style={tag.color ? { color: tag.color } : { color: '#6b7280' }}
+                  className="h-12 w-12 text-neutral-500"
                 />
               </div>
             </div>
