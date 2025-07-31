@@ -113,4 +113,17 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  /* Override Payload admin CSS specificity */
+  .text-center,
+  p.text-center,
+  div.text-center {
+    text-align: center !important;
+  }
+  
+  /* Ensure PageWrapper text-center works */
+  .text-center > *,
+  .text-center p {
+    text-align: center !important;
+  }
 }
