@@ -122,13 +122,24 @@ export const Reviews: CollectionConfig = {
         description: 'Short review summary (max 300 characters)',
       },
     },
+    // Review Content Section
     {
-      name: 'content',
-      type: 'richText',
-      required: true,
+      type: 'collapsible',
+      label: 'Review Content',
       admin: {
-        description: 'Full review content',
+        initCollapsed: false,
+        description: 'Write your book review',
       },
+      fields: [
+        {
+          name: 'content',
+          type: 'richText',
+          required: true,
+          admin: {
+            description: 'Full review content',
+          },
+        },
+      ],
     },
     {
       name: 'rating',
