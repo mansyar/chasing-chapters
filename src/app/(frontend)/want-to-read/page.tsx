@@ -46,7 +46,7 @@ export default async function WantToReadPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
             Want to Read
           </h1>
-          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             My ever-growing reading wishlist. These are the books that have caught my attention 
             and are waiting to be discovered.
           </p>
@@ -78,7 +78,7 @@ export default async function WantToReadPage() {
               <h2 className="text-2xl font-bold text-neutral-900 mb-4">
                 No books on the reading list yet
               </h2>
-              <p className="text-neutral-600 mb-8 max-w-md mx-auto">
+              <p className="text-neutral-600 mb-8 max-w-md mx-auto text-center">
                 My reading wishlist is currently empty. I&apos;m always on the lookout for great book recommendations!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -100,7 +100,7 @@ export default async function WantToReadPage() {
           <h2 className="text-3xl font-bold text-neutral-900 mb-4">
             My Reading Philosophy
           </h2>
-          <p className="text-lg text-neutral-700 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg text-neutral-700 mb-8 max-w-3xl mx-auto text-center">
             I believe every book has something to offer, whether it&apos;s knowledge, entertainment, 
             or a new perspective. My reading list reflects my curiosity across genres and topics.
           </p>

@@ -24,7 +24,7 @@ export default function ContactPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
             Let&apos;s Connect
           </h1>
-          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             I love connecting with fellow book lovers! Whether you have recommendations, 
             questions, or just want to chat about your latest read, I&apos;d love to hear from you.
           </p>
@@ -39,7 +39,7 @@ export default function ContactPage() {
               <h2 className="text-3xl font-bold text-neutral-900 mb-4">
                 Ways to Reach Me
               </h2>
-              <p className="text-lg text-neutral-600">
+              <p className="text-lg text-neutral-600 text-center">
                 Choose the method that works best for you
               </p>
             </div>
@@ -137,7 +137,7 @@ export default function ContactPage() {
               <h2 className="text-3xl font-bold text-neutral-900 mb-4">
                 Reasons to Get in Touch
               </h2>
-              <p className="text-lg text-neutral-600">
+              <p className="text-lg text-neutral-600 text-center">
                 Here are some great reasons to reach out
               </p>
             </div>
@@ -247,7 +247,7 @@ export default function ContactPage() {
           <h2 className="text-3xl font-bold text-neutral-900 mb-4">
             Ready to Connect?
           </h2>
-          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             I&apos;m always excited to meet fellow book lovers and discover new perspectives 
             on literature. Don&apos;t be shy—reach out today!
           </p>

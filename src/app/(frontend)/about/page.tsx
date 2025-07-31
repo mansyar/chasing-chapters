@@ -24,7 +24,7 @@ export default function AboutPage() {
           <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
             About Chasing Chapters
           </h1>
-          <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto text-center">
             Welcome to my personal corner of the literary world. Here, I share my journey 
             through books, stories, and the endless adventures that reading brings to life.
           </p>
@@ -104,7 +104,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               What You&apos;ll Find Here
             </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto text-center">
               Chasing Chapters is designed to be your companion in discovering great books 
               and exploring different perspectives through literature.
             </p>
@@ -220,7 +220,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-neutral-900 mb-4">
             Join the Journey
           </h2>
-          <p className="text-lg text-neutral-700 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-700 mb-8 max-w-2xl mx-auto text-center">
             Ready to discover your next great read? Explore my reviews, check out what 
             I&apos;m currently reading, or get in touch to share your own book recommendations.
           </p>

@@ -71,7 +71,7 @@ export default async function HomePage() {
           <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
             Welcome to Chasing Chapters
           </h1>
-          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             A personal journey through books, stories, and the adventures they hold. 
             Join me as I discover new worlds through reading.
           </p>
@@ -142,7 +142,7 @@ export default async function HomePage() {
           <h2 className="text-3xl font-bold text-neutral-900 mb-4">
             Stay Updated
           </h2>
-          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             Follow along as I explore new books, share thoughts on recent reads, 
             and discover hidden literary gems.
           </p>

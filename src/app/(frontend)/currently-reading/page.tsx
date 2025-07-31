@@ -46,7 +46,7 @@ export default async function CurrentlyReadingPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
             Currently Reading
           </h1>
-          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto text-center">
             Books I&apos;m actively reading right now. Follow along with my reading journey!
           </p>
           
@@ -77,7 +77,7 @@ export default async function CurrentlyReadingPage() {
               <h2 className="text-2xl font-bold text-neutral-900 mb-4">
                 No books currently being read
               </h2>
-              <p className="text-neutral-600 mb-8 max-w-md mx-auto">
+              <p className="text-neutral-600 mb-8 max-w-md mx-auto text-center">
                 I&apos;m not actively reading any books at the moment. Check back soon for updates!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

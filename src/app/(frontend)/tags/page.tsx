@@ -72,7 +72,7 @@ export default async function TagsPage() {
           <h1 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">
             Browse by Tags
           </h1>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-600 max-w-2xl mx-auto text-center">
             Explore book reviews organized by topics, genres, and themes. 
             Find your next great read through our curated tag system.
           </p>
@@ -177,7 +177,7 @@ export default async function TagsPage() {
               <h3 className="text-2xl font-semibold text-neutral-900 mb-2">
                 No Tags Yet
               </h3>
-              <p className="text-neutral-600 mb-6">
+              <p className="text-neutral-600 mb-6 text-center">
                 Tags will appear here once reviews are published with topic labels.
               </p>
               <Link href="/reviews" className="btn-primary">
@@ -195,7 +195,7 @@ export default async function TagsPage() {
             <h2 className="text-2xl font-bold text-neutral-900 mb-4">
               Can&apos;t find what you&apos;re looking for?
             </h2>
-            <p className="text-neutral-600 mb-6">
+            <p className="text-neutral-600 mb-6 text-center">
               Browse all reviews or explore different reading categories.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

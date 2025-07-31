@@ -43,7 +43,7 @@ export default async function ReviewsPage() {
           <h1 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">
             Book Reviews
           </h1>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-600 max-w-2xl mx-auto text-center">
             Discover thoughtful reviews of books across various genres. 
             From contemporary fiction to classic literature, find your next great read.
           </p>
@@ -71,7 +71,7 @@ export default async function ReviewsPage() {
               <h2 className="text-2xl font-semibold text-neutral-900 mb-2">
                 No Reviews Yet
               </h2>
-              <p className="text-neutral-600 mb-6">
+              <p className="text-neutral-600 mb-8">
                 Book reviews will appear here once they&apos;re published.
               </p>
               <a
